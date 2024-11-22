@@ -1,0 +1,33 @@
+[
+    {
+      "id": 1,
+      "title": "Trump hush money case",
+      "text": "President-elect’s legal team prepares a motion to overturn the verdict in case related to Stormy Daniels ‘affair’ before he enters the White House",
+      "date": 1732129797,
+      "author": "Maria",
+      "comments": []
+    },
+    {
+      "id": 2,
+      "title": "We tried the most expensive mince pies in Britain",
+      "text": "Pump Street Bakery charges £25 for a box of six festive treats, full of currants from Greece and locally grown apples — but how do they compare?",
+      "date": 1732133397,
+      "author": "Ivanna",
+      "comments": [
+        {
+          "id": "c1",
+          "articleId": 1,
+          "text": "Sounds good",
+          "date": 1732306197,
+          "author": "Rachel"
+        },
+        {
+          "id": "c2",
+          "articleId": 1,
+          "text": "I like it",
+          "date": 1732306177,
+          "author": "Monica"
+        }
+      ]
+    }
+  ]
