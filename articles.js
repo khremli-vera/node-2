@@ -14,7 +14,9 @@ server.listen(port, hostname, () => {
 const handlers = {
     '/api/articles/readall': constrollers.readall,
     '/api/articles/read': constrollers.read,
-    '/api/articles/create': constrollers.create
+    '/api/articles/create': constrollers.create,
+    '/api/articles/update': constrollers.update
+
 };
 
 function handler(req, res) {
