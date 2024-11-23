@@ -1,5 +1,6 @@
 const fs = require('fs');
 const helper = require('./helper');
+const { get } = require('https');
 
 function readall(req, res) {
     let array;
@@ -58,7 +59,7 @@ function create(req, res) {
     })
 }
 
-function update (req, res, params) {
+function update(req, res, params) {
     let arrayStr;
     let array;
 
@@ -75,7 +76,7 @@ function update (req, res, params) {
                 author: body.author || item.author,
                 comments: item.comments
             })
-       
+
             let json = JSON.stringify(array);
             fs.writeFile('articles.json', json, 'utf-8', (err) => {
                 if (err) {
@@ -84,37 +85,37 @@ function update (req, res, params) {
                     console.log('the file was updated')
                 }
             })
-        res.setHeader('Content-Type', 'application/json');
-        res.statusCode = 200;
-        res.end('Updated')
-    })
+            res.setHeader('Content-Type', 'application/json');
+            res.statusCode = 200;
+            res.end('Updated')
+        })
     })
 }
 
-function delete_article (req, res, params) {
+function delete_article(req, res, params) {
     let arrayStr;
     let array;
 
     fs.readFile('articles.json', (err, data) => {
         arrayStr = data.toString();
         array = JSON.parse(arrayStr);
-        array.splice(params.id - 1 , 1)
+        array.splice(params.id - 1, 1)
         console.log(array);
         let json = JSON.stringify(array);
-            fs.writeFile('articles.json', json, 'utf-8', (err) => {
-                if (err) {
-                    console.log('Cant write to file');
-                } else {
-                    console.log('the file was updated')
-                }
-            })
+        fs.writeFile('articles.json', json, 'utf-8', (err) => {
+            if (err) {
+                console.log('Cant write to file');
+            } else {
+                console.log('the file was updated')
+            }
+        })
         res.setHeader('Content-Type', 'application/json');
         res.statusCode = 200;
         res.end('Deleted')
     })
 }
 
-function create_comment (req, res) {
+function create_comment(req, res) {
     let arrayStr;
     let array;
 
@@ -123,20 +124,20 @@ function create_comment (req, res) {
         array = JSON.parse(arrayStr);
 
         helper.parseBody(req, (err, body) => {
-            let i = body.articleId-1;
-            if (!array[i]) {
+            let maxId = getLastComment(array) ;
+            if (!array[body.articleId - 1]) {
                 res.statusCode = 404;
-            res.end('articleId is wrong');
-            return
+                res.end('articleId is wrong');
+                return
             }
             const newComment = {
-                id: array[i].comments.length + 1,
+                id: maxId + 1,
                 articleId: body.articleId,
                 text: body.text,
                 date: body.date,
                 author: body.author
             };
-            array[i].comments.push(newComment);
+            array[body.articleId - 1].comments.push(newComment);
             let json = JSON.stringify(array);
             fs.writeFile('articles.json', json, 'utf-8', (err) => {
                 if (err) {
@@ -153,6 +154,47 @@ function create_comment (req, res) {
 
 }
 
+function delete_comment(req, res, params) {
+    let arrayStr;
+    let array;
+
+    fs.readFile('articles.json', (err, data) => {
+        arrayStr = data.toString();
+        array = JSON.parse(arrayStr);
+        for (let i = 0; i < array.length; i++) {
+            for (let j = 0; j < array[i].comments.length; j++) {
+                if (array[i].comments[j].id == params.id) {
+                    array[i].comments.splice(j,1)
+                }
+            }
+        }
+        let json = JSON.stringify(array);
+        fs.writeFile('articles.json', json, 'utf-8', (err) => {
+            if (err) {
+                console.log('Cant write to file');
+            } else {
+                console.log('the file was updated')
+            }
+        })
+        res.setHeader('Content-Type', 'application/json');
+        res.statusCode = 200;
+        res.end('Deleted')
+    })
+}
+
+function getLastComment (array) {
+        let maxId =0;
+        for (let i = 0; i < array.length; i++) {
+            
+            for (let j = 0; j < array[i].comments.length; j++) {
+                
+                if (array[i].comments[j].id > maxId) {maxId = array[i].comments[j].id}
+            }
+        }
+        return maxId
+        
+}
+
 
 module.exports = {
     readall,
@@ -160,5 +202,6 @@ module.exports = {
     create,
     update,
     delete_article,
-    create_comment
+    create_comment,
+    delete_comment
 }

@@ -17,7 +17,8 @@ const handlers = {
     '/api/articles/create': constrollers.create,
     '/api/articles/update': constrollers.update,
     '/api/articles/delete': constrollers.delete_article,
-    '/api/comments/create': constrollers.create_comment
+    '/api/comments/create': constrollers.create_comment,
+    '/api/comments/delete': constrollers.delete_comment
 
 };
 
