@@ -18,6 +18,19 @@ function readall(req, res) {
     })
 }
 
+function read (req, res, params) {
+    let arrayStr;
+    let array;
+    fs.readFile('articles.json', (err, data) => {
+        arrayStr = data.toString();
+        array = JSON.parse(arrayStr);
+        let article = array[params.id];
+        res.setHeader('Content-Type', 'application/json');
+        res.statusCode = 200;
+        res.end(JSON.stringify(article))
+    })
+}
+
 // function getFile(req, res) {
 //     fs.readFile('example.txt', 'utf-8', (err, data) => {
 //         res.setHeader('Content-Type', 'text/plain');
@@ -28,5 +41,6 @@ function readall(req, res) {
 // }
 
 module.exports = {
-    readall
+    readall,
+    read
 }
