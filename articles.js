@@ -15,7 +15,8 @@ const handlers = {
     '/api/articles/readall': constrollers.readall,
     '/api/articles/read': constrollers.read,
     '/api/articles/create': constrollers.create,
-    '/api/articles/update': constrollers.update
+    '/api/articles/update': constrollers.update,
+    '/api/articles/delete': constrollers.delete_article
 
 };
 

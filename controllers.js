@@ -10,7 +10,6 @@ function readall(req, res) {
 
         res.setHeader('Content-Type', 'application/json');
         res.statusCode = 200;
-        // news.forEach(item => res.write(`[${item.date}]: ${item.text}</br>`));
         res.end(array);
     })
 }
@@ -92,18 +91,34 @@ function update (req, res, params) {
     })
 }
 
-// function getFile(req, res) {
-//     fs.readFile('example.txt', 'utf-8', (err, data) => {
-//         res.setHeader('Content-Type', 'text/plain');
-//         res.end(data);
-//     })
+function delete_article (req, res, params) {
+    let arrayStr;
+    let array;
 
-//     fs.writeFile('example.txt', 'any text', {}, () => console.log('file written'))
-// }
+    fs.readFile('articles.json', (err, data) => {
+        arrayStr = data.toString();
+        array = JSON.parse(arrayStr);
+        array.splice(params.id - 1 , 1)
+        console.log(array);
+        let json = JSON.stringify(array);
+            fs.writeFile('articles.json', json, 'utf-8', (err) => {
+                if (err) {
+                    console.log('Cant write to file');
+                } else {
+                    console.log('the file was updated')
+                }
+            })
+        res.setHeader('Content-Type', 'application/json');
+        res.statusCode = 200;
+        res.end('Deleted')
+    })
+}
+
 
 module.exports = {
     readall,
     read,
     create,
-    update
+    update,
+    delete_article
 }
