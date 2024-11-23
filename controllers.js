@@ -1,8 +1,5 @@
 const fs = require('fs');
 const helper = require('./helper');
-let artData;
-
-
 
 function readall(req, res) {
     let array;
@@ -57,7 +54,7 @@ function create(req, res) {
                 }
             })
             res.statusCode = 201;
-            res.end("Created");
+            res.end(JSON.stringify(newArticle));
         });
     })
 }
