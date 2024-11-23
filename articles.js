@@ -13,13 +13,12 @@ server.listen(port, hostname, () => {
 
 const handlers = {
     '/api/articles/readall': constrollers.readall,
-    '/api/articles/read': constrollers.read
+    '/api/articles/read': constrollers.read,
+    '/api/articles/create': constrollers.create
 };
 
 function handler(req, res) {
     const { url, params } = helper.parseUrl(req.url);
-    console.log(url);
-    console.log(params);
     const handler = handlers[url];
 
     if (handler) {

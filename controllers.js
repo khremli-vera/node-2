@@ -18,7 +18,7 @@ function readall(req, res) {
     })
 }
 
-function read (req, res, params) {
+function read(req, res, params) {
     let arrayStr;
     let array;
     fs.readFile('articles.json', (err, data) => {
@@ -29,6 +29,39 @@ function read (req, res, params) {
         res.statusCode = 200;
         res.end(JSON.stringify(article))
     })
+}
+
+function create(req, res) {
+    let arrayStr;
+    let array;
+    fs.readFile('articles.json', (err, data) => {
+        arrayStr = data.toString();
+        array = JSON.parse(arrayStr);
+
+        helper.parseBody(req, (err, body) => {
+            const newArticle = {
+                id: array.length + 1,
+                title: body.title,
+                text: body.text,
+                date: body.date,
+                author: body.author,
+                comments: []
+            };
+            array.push(newArticle);
+            let json = JSON.stringify(array);
+            fs.writeFile('articles.json', json, 'utf-8', (err) => {
+                if (err) {
+                    console.log('Cant write to file');
+                } else {
+                    console.log('the file was updated')
+                }
+            })
+            res.statusCode = 201;
+            res.end("Created");
+        });
+
+    })
+
 }
 
 // function getFile(req, res) {
@@ -42,5 +75,6 @@ function read (req, res, params) {
 
 module.exports = {
     readall,
-    read
+    read,
+    create
 }
