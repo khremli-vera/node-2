@@ -114,11 +114,51 @@ function delete_article (req, res, params) {
     })
 }
 
+function create_comment (req, res) {
+    let arrayStr;
+    let array;
+
+    fs.readFile('articles.json', (err, data) => {
+        arrayStr = data.toString();
+        array = JSON.parse(arrayStr);
+
+        helper.parseBody(req, (err, body) => {
+            let i = body.articleId-1;
+            if (!array[i]) {
+                res.statusCode = 404;
+            res.end('articleId is wrong');
+            return
+            }
+            const newComment = {
+                id: array[i].comments.length + 1,
+                articleId: body.articleId,
+                text: body.text,
+                date: body.date,
+                author: body.author
+            };
+            array[i].comments.push(newComment);
+            let json = JSON.stringify(array);
+            fs.writeFile('articles.json', json, 'utf-8', (err) => {
+                if (err) {
+                    console.log('Cant write to file');
+                } else {
+                    console.log('the file was updated')
+                }
+            })
+            res.statusCode = 201;
+            res.end(JSON.stringify(newComment));
+        });
+
+    })
+
+}
+
 
 module.exports = {
     readall,
     read,
     create,
     update,
-    delete_article
+    delete_article,
+    create_comment
 }
