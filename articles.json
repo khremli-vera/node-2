@@ -12,13 +12,6 @@
                 "text": "Lorem ipsum",
                 "date": 454545,
                 "author": "Damon"
-            },
-            {
-                "id": 6,
-                "articleId": 1,
-                "text": "Lorem ipsum",
-                "date": 454545,
-                "author": "Damon"
             }
         ]
     },
@@ -46,22 +39,15 @@
         ]
     },
     {
-        "id": 3,
-        "title": "Rihanna",
-        "text": "some upgated data",
-        "date": 48484884,
-        "author": "Mani",
+        "id": 4,
+        "title": "Lisa",
+        "text": "test",
+        "date": 1732129797,
+        "author": "Laura",
         "comments": [
             {
-                "id": 1,
-                "articleId": 2,
-                "text": "Lorem ipsum",
-                "date": 454545,
-                "author": "Damon"
-            },
-            {
-                "id": 4,
-                "articleId": 3,
+                "id": 7,
+                "articleId": 4,
                 "text": "Lorem ipsum",
                 "date": 454545,
                 "author": "Damon"

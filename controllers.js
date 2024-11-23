@@ -1,6 +1,5 @@
 const fs = require('fs');
 const helper = require('./helper');
-const { get } = require('https');
 
 function readall(req, res) {
     let array;
@@ -21,7 +20,7 @@ function read(req, res, params) {
     fs.readFile('articles.json', (err, data) => {
         arrayStr = data.toString();
         array = JSON.parse(arrayStr);
-        let article = array[params.id];
+        let article = array[params.id-1];
         res.setHeader('Content-Type', 'application/json');
         res.statusCode = 200;
         res.end(JSON.stringify(article))
@@ -125,11 +124,11 @@ function create_comment(req, res) {
 
         helper.parseBody(req, (err, body) => {
             let maxId = getLastComment(array) ;
-            if (!array[body.articleId - 1]) {
-                res.statusCode = 404;
-                res.end('articleId is wrong');
-                return
-            }
+            // if (!array[body.articleId - 1]) {
+            //     res.statusCode = 404;
+            //     res.end('articleId is wrong');
+            //     return
+            // }
             const newComment = {
                 id: maxId + 1,
                 articleId: body.articleId,
@@ -137,7 +136,12 @@ function create_comment(req, res) {
                 date: body.date,
                 author: body.author
             };
-            array[body.articleId - 1].comments.push(newComment);
+            for (let i = 0; i < array.length; i++) {
+                if (array[i].id == body.articleId) {
+                    array[i].comments.push(newComment);
+                }
+            }
+            
             let json = JSON.stringify(array);
             fs.writeFile('articles.json', json, 'utf-8', (err) => {
                 if (err) {
