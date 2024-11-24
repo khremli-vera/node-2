@@ -18,6 +18,10 @@ function read(path, req, res, params) {
     fs.readFile('articles.json', (err, data) => {
         arrayStr = data.toString();
         array = JSON.parse(arrayStr);
+        if (!array[params.id - 1]) {
+            send400(req, res);
+            return
+        }
         let article = array[params.id - 1];
         res.setHeader('Content-Type', 'application/json');
         res.statusCode = 200;
@@ -36,7 +40,9 @@ function create(path, req, res) {
         
         helper.parseBody(req, (err, body) => {
             bodyLog(path, body);
-            
+            if (err) {
+                send400(req, res)
+            }            
             const newArticle = {
                 id: array.length + 1,
                 title: body.title,
@@ -45,7 +51,7 @@ function create(path, req, res) {
                 author: body.author,
                 comments: []
             };
-            
+          
             array.push(newArticle);
             let json = JSON.stringify(array);
             fs.writeFile('articles.json', json, 'utf-8', (err) => {
@@ -71,6 +77,10 @@ function update(path, req, res, params) {
 
         helper.parseBody(req, (err, body) => {
             bodyLog(path, body);
+            if (!array[params.id]) {
+                send400(req, res);
+                return
+            }
             array = array.map(item => item.id != params.id ? item : {
                 id: item.id,
                 title: body.title || item.title,
@@ -102,6 +112,10 @@ function delete_article(path, req, res, params) {
     fs.readFile('articles.json', (err, data) => {
         arrayStr = data.toString();
         array = JSON.parse(arrayStr);
+        if (!array[params.id - 1]) {
+            send400(req, res);
+            return
+        }
         array.splice(params.id - 1, 1)
         console.log(array);
         let json = JSON.stringify(array);
@@ -129,11 +143,10 @@ function create_comment(path, req, res) {
         helper.parseBody(req, (err, body) => {
             bodyLog(path, body);
             let maxId = getLastComment(array);
-            // if (!array[body.articleId - 1]) {
-            //     res.statusCode = 404;
-            //     res.end('articleId is wrong');
-            //     return
-            // }
+            if (!array[body.articleId]) {
+                send400(req, res);
+                return
+            }
             const newComment = {
                 id: maxId + 1,
                 articleId: body.articleId,
@@ -170,12 +183,19 @@ function delete_comment(path, req, res, params) {
     fs.readFile('articles.json', (err, data) => {
         arrayStr = data.toString();
         array = JSON.parse(arrayStr);
+        let commemtExist = false;
         for (let i = 0; i < array.length; i++) {
             for (let j = 0; j < array[i].comments.length; j++) {
                 if (array[i].comments[j].id == params.id) {
-                    array[i].comments.splice(j, 1)
+                    array[i].comments.splice(j, 1);
+                    commemtExist = true
                 }
             }
+        }
+
+        if (!commemtExist) {
+            send400(req, res);
+                return
         }
         let json = JSON.stringify(array);
         fs.writeFile('articles.json', json, 'utf-8', (err) => {
@@ -228,6 +248,11 @@ function bodyLog(path, body) {
 
 }
 
+function send400(req, res) {
+    res.statusCode = 400;
+    res.end('Request invalid');
+}
+
 module.exports = {
     readall,
     read,
@@ -236,5 +261,6 @@ module.exports = {
     delete_article,
     create_comment,
     delete_comment,
-    log
+    log,
+    send400
 }

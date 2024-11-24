@@ -29,12 +29,8 @@ function handler(req, res) {
     if (handler) {
         handler('log.txt', req, res, params);
     } else {
-        send404(req, res);
+        constrollers.send400(req, res);
     }
     constrollers.log(req, 'log.txt')
 }
 
-function send404(req, res) {
-    res.statusCode = 404;
-    res.end('404 Page Not Found');
-}
