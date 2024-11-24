@@ -5,6 +5,7 @@ function parseBody(req, cb) {
         body.push(chunk);
     }).on("end", () => {
         body = Buffer.concat(body).toString();
+        
         body = JSON.parse(body);
         cb(null, body);
     });

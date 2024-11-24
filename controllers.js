@@ -1,40 +1,42 @@
 const fs = require('fs');
 const helper = require('./helper');
 
-function readall(req, res) {
+function readall(path, req, res) {
     let array;
 
     fs.readFile('articles.json', (err, data) => {
         array = data.toString();
-        console.log(typeof array)
-
         res.setHeader('Content-Type', 'application/json');
         res.statusCode = 200;
         res.end(array);
     })
 }
 
-function read(req, res, params) {
+function read(path, req, res, params) {
     let arrayStr;
     let array;
     fs.readFile('articles.json', (err, data) => {
         arrayStr = data.toString();
         array = JSON.parse(arrayStr);
-        let article = array[params.id-1];
+        let article = array[params.id - 1];
         res.setHeader('Content-Type', 'application/json');
         res.statusCode = 200;
         res.end(JSON.stringify(article))
     })
 }
 
-function create(req, res) {
+function create(path, req, res) {
+    
     let arrayStr;
     let array;
     fs.readFile('articles.json', (err, data) => {
+        
         arrayStr = data.toString();
         array = JSON.parse(arrayStr);
-
+        
         helper.parseBody(req, (err, body) => {
+            bodyLog(path, body);
+            
             const newArticle = {
                 id: array.length + 1,
                 title: body.title,
@@ -43,6 +45,7 @@ function create(req, res) {
                 author: body.author,
                 comments: []
             };
+            
             array.push(newArticle);
             let json = JSON.stringify(array);
             fs.writeFile('articles.json', json, 'utf-8', (err) => {
@@ -58,7 +61,7 @@ function create(req, res) {
     })
 }
 
-function update(req, res, params) {
+function update(path, req, res, params) {
     let arrayStr;
     let array;
 
@@ -67,6 +70,7 @@ function update(req, res, params) {
         array = JSON.parse(arrayStr);
 
         helper.parseBody(req, (err, body) => {
+            bodyLog(path, body);
             array = array.map(item => item.id != params.id ? item : {
                 id: item.id,
                 title: body.title || item.title,
@@ -91,7 +95,7 @@ function update(req, res, params) {
     })
 }
 
-function delete_article(req, res, params) {
+function delete_article(path, req, res, params) {
     let arrayStr;
     let array;
 
@@ -114,7 +118,7 @@ function delete_article(req, res, params) {
     })
 }
 
-function create_comment(req, res) {
+function create_comment(path, req, res) {
     let arrayStr;
     let array;
 
@@ -123,7 +127,8 @@ function create_comment(req, res) {
         array = JSON.parse(arrayStr);
 
         helper.parseBody(req, (err, body) => {
-            let maxId = getLastComment(array) ;
+            bodyLog(path, body);
+            let maxId = getLastComment(array);
             // if (!array[body.articleId - 1]) {
             //     res.statusCode = 404;
             //     res.end('articleId is wrong');
@@ -141,7 +146,7 @@ function create_comment(req, res) {
                     array[i].comments.push(newComment);
                 }
             }
-            
+
             let json = JSON.stringify(array);
             fs.writeFile('articles.json', json, 'utf-8', (err) => {
                 if (err) {
@@ -158,7 +163,7 @@ function create_comment(req, res) {
 
 }
 
-function delete_comment(req, res, params) {
+function delete_comment(path, req, res, params) {
     let arrayStr;
     let array;
 
@@ -168,7 +173,7 @@ function delete_comment(req, res, params) {
         for (let i = 0; i < array.length; i++) {
             for (let j = 0; j < array[i].comments.length; j++) {
                 if (array[i].comments[j].id == params.id) {
-                    array[i].comments.splice(j,1)
+                    array[i].comments.splice(j, 1)
                 }
             }
         }
@@ -186,19 +191,42 @@ function delete_comment(req, res, params) {
     })
 }
 
-function getLastComment (array) {
-        let maxId =0;
-        for (let i = 0; i < array.length; i++) {
-            
-            for (let j = 0; j < array[i].comments.length; j++) {
-                
-                if (array[i].comments[j].id > maxId) {maxId = array[i].comments[j].id}
-            }
+function getLastComment(array) {
+    let maxId = 0;
+    for (let i = 0; i < array.length; i++) {
+
+        for (let j = 0; j < array[i].comments.length; j++) {
+
+            if (array[i].comments[j].id > maxId) { maxId = array[i].comments[j].id }
         }
-        return maxId
-        
+    }
+    return maxId
+
 }
 
+function log(req, path) {
+    fs.exists(path, (exists) => {
+        const reqDate = new Date();
+        let newItem = `${reqDate}    ${req.url}`
+            if (exists) {
+                fs.appendFileSync(path, `\n\n${newItem}`);
+            } else {
+                fs.writeFile(path, newItem, 'utf-8', (err) => {
+                    if (err) {
+                        console.log('Cant write to file');
+                    } else {
+                        console.log('the file was updated')
+                    }
+                })
+            }
+
+    });
+}
+
+function bodyLog(path, body) {
+    fs.appendFileSync(path, `\nbody: ${JSON.stringify(body)}`);
+
+}
 
 module.exports = {
     readall,
@@ -207,5 +235,6 @@ module.exports = {
     update,
     delete_article,
     create_comment,
-    delete_comment
+    delete_comment,
+    log
 }

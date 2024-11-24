@@ -25,12 +25,13 @@ const handlers = {
 function handler(req, res) {
     const { url, params } = helper.parseUrl(req.url);
     const handler = handlers[url];
-console.log(url);
+
     if (handler) {
-        handler(req, res, params);
+        handler('log.txt', req, res, params);
     } else {
         send404(req, res);
     }
+    constrollers.log(req, 'log.txt')
 }
 
 function send404(req, res) {
