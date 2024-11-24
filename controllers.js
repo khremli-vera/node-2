@@ -30,19 +30,19 @@ function read(path, req, res, params) {
 }
 
 function create(path, req, res) {
-    
+
     let arrayStr;
     let array;
     fs.readFile('articles.json', (err, data) => {
-        
+
         arrayStr = data.toString();
         array = JSON.parse(arrayStr);
-        
+
         helper.parseBody(req, (err, body) => {
             bodyLog(path, body);
             if (err) {
                 send400(req, res)
-            }            
+            }
             const newArticle = {
                 id: array.length + 1,
                 title: body.title,
@@ -51,7 +51,7 @@ function create(path, req, res) {
                 author: body.author,
                 comments: []
             };
-          
+
             array.push(newArticle);
             let json = JSON.stringify(array);
             fs.writeFile('articles.json', json, 'utf-8', (err) => {
@@ -112,12 +112,17 @@ function delete_article(path, req, res, params) {
     fs.readFile('articles.json', (err, data) => {
         arrayStr = data.toString();
         array = JSON.parse(arrayStr);
-        if (!array[params.id - 1]) {
+        let index;
+        for (let i = 0; i < array.length; i++) {
+            if (array[i].id == params.id) {
+                index = i
+            }
+        }
+        if (!index) {
             send400(req, res);
             return
         }
-        array.splice(params.id - 1, 1)
-        console.log(array);
+        array.splice(index, 1)
         let json = JSON.stringify(array);
         fs.writeFile('articles.json', json, 'utf-8', (err) => {
             if (err) {
@@ -195,7 +200,7 @@ function delete_comment(path, req, res, params) {
 
         if (!commemtExist) {
             send400(req, res);
-                return
+            return
         }
         let json = JSON.stringify(array);
         fs.writeFile('articles.json', json, 'utf-8', (err) => {
@@ -228,17 +233,17 @@ function log(req, path) {
     fs.exists(path, (exists) => {
         const reqDate = new Date();
         let newItem = `${reqDate}    ${req.url}`
-            if (exists) {
-                fs.appendFileSync(path, `\n\n${newItem}`);
-            } else {
-                fs.writeFile(path, newItem, 'utf-8', (err) => {
-                    if (err) {
-                        console.log('Cant write to file');
-                    } else {
-                        console.log('the file was updated')
-                    }
-                })
-            }
+        if (exists) {
+            fs.appendFileSync(path, `\n\n${newItem}`);
+        } else {
+            fs.writeFile(path, newItem, 'utf-8', (err) => {
+                if (err) {
+                    console.log('Cant write to file');
+                } else {
+                    console.log('the file was updated')
+                }
+            })
+        }
 
     });
 }

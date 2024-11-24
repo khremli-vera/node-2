@@ -89,3 +89,20 @@ body: {"articleId":56,"text":"Lorem ipsum","date":454545,"author":"Damon"}
 Sun Nov 24 2024 13:13:29 GMT+0300 (Moscow Standard Time)    /api/comments/delete?id=6
 
 Sun Nov 24 2024 13:13:39 GMT+0300 (Moscow Standard Time)    /api/comments/delete?id=678
+
+Sun Nov 24 2024 23:29:46 GMT+0300 (Moscow Standard Time)    /api/articles/readall
+
+Sun Nov 24 2024 23:30:17 GMT+0300 (Moscow Standard Time)    /api/articles/read?id=5
+
+Sun Nov 24 2024 23:30:33 GMT+0300 (Moscow Standard Time)    /api/articles/delete?id=5
+
+Sun Nov 24 2024 23:30:58 GMT+0300 (Moscow Standard Time)    /api/articles/delete?id=5
+
+Sun Nov 24 2024 23:31:36 GMT+0300 (Moscow Standard Time)    /api/comments/create
+body: {"articleId":6,"text":"Lorem ipsum","date":454545,"author":"Rita"}
+
+Sun Nov 24 2024 23:32:37 GMT+0300 (Moscow Standard Time)    /api/comments/delete?id=8
+
+Sun Nov 24 2024 23:32:44 GMT+0300 (Moscow Standard Time)    /api/comments/delete?id=1525
+
+Sun Nov 24 2024 23:32:53 GMT+0300 (Moscow Standard Time)    /api/articles/delete?id=545745
